@@ -128,7 +128,8 @@ public class Screen1Controller {
 
             Stage stage = new Stage();
             stage.setTitle("Subject Selection");
-            stage.setScene(new Scene(root, 700, 613));
+            stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.show();
 
             // Close the current window
@@ -152,7 +153,8 @@ public class Screen1Controller {
 
             Stage stage = new Stage();
             stage.setTitle("Recommended Subjects");
-            stage.setScene(new Scene(root, 700, 704));
+            stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.show();
 
 

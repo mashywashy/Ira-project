@@ -11,7 +11,8 @@ public class EvalApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(EvalApp.class.getResource("screen1.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 750, 500);
+        Scene scene = new Scene(fxmlLoader.load());
+        stage.setMaximized(true);
         stage.setTitle("Eval Portal");
         stage.setScene(scene);
         stage.show();
