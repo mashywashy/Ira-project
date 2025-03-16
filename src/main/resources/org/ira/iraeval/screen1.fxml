@@ -4,60 +4,152 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: #121212;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ira.iraeval.Screen1Controller">
+<VBox prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #f0f5fa;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ira.iraeval.Screen1Controller">
     <children>
-        <HBox spacing="0">
-            <VBox prefHeight="561.0" prefWidth="715.0" spacing="20.0" style="-fx-padding: 30px;">
-                <children>
-                    <Label text="Student Subject Evaluator" textFill="#ffffff">
-                        <font>
-                            <Font name="System Bold" size="22.0" />
-                        </font>
-                    </Label>
-                    <VBox prefHeight="307.0" prefWidth="640.0" spacing="10.0" style="-fx-background-color: #1e1e1e; -fx-padding: 20px; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 5);">
-                        <children>
-                            <HBox spacing="10.0">
-                                <Label prefWidth="120.0" text="Name:" textFill="#bbbbbb" />
-                                <TextField fx:id="nameField" promptText="Enter full name" style="-fx-background-color: #333333; -fx-text-fill: white;" />
-                            </HBox>
-                            <HBox spacing="10.0">
-                                <Label prefWidth="120.0" text="ID Number:" textFill="#bbbbbb" />
-                                <TextField fx:id="idNumberField" promptText="Enter ID number" style="-fx-background-color: #333333; -fx-text-fill: white;" />
-                            </HBox>
-                            <HBox spacing="10.0">
-                                <Label prefWidth="120.0" text="New Student:" textFill="#bbbbbb" />
-                                <ComboBox fx:id="newStudentComboBox" promptText="Select" style="-fx-background-color: white; -fx-text-fill: white;" />
-                            </HBox>
-                            <HBox spacing="10.0">
-                                <Label prefWidth="120.0" text="Year Level:" textFill="#bbbbbb" />
-                                <ComboBox fx:id="yearLevelComboBox" promptText="Select year" style="-fx-background-color: white; -fx-text-fill: #bbbbbb;" disable="true" />
-                            </HBox>
-                            <HBox spacing="10.0">
-                                <Label prefWidth="120.0" text="Semester:" textFill="#bbbbbb" />
-                                <ComboBox fx:id="semesterComboBox" promptText="Select semester" style="-fx-background-color: white; -fx-text-fill: #bbbbbb;" disable="true" />
-                            </HBox>
-                            <HBox spacing="10.0">
-                                <Label prefWidth="120.0" text="Recent Subjects:" textFill="#bbbbbb" />
-                                <TextField fx:id="subjectsField" disable="true" promptText="Number of subjects" style="-fx-background-color: #333333; -fx-text-fill: white;" />
-                            </HBox>
-                            <HBox spacing="10.0">
-                                <Label prefWidth="120.0" text="Program:" textFill="#bbbbbb" />
-                                <ComboBox fx:id="programComboBox" promptText="Select program" style="-fx-background-color: white; -fx-text-fill: #bbbbbb;" />
-                            </HBox>
-                        </children>
-                    </VBox>
-                    <HBox alignment="CENTER_RIGHT" spacing="15.0">
-                        <children>
-                            <Button fx:id="cancelButton" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" text="Cancel" />
-                            <Button fx:id="nextButton" style="-fx-background-color: #2ecc71; -fx-text-fill: white;" text="Next" />
-                        </children>
-                    </HBox>
-                </children>
-            </VBox>
+        <!-- Header with logo and title -->
+        <HBox alignment="CENTER_LEFT" style="-fx-background-color: #1a5276; -fx-padding: 15px;">
+            <children>
+                <!-- Logo placeholder -->
+                <StackPane prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;">
+                    <children>
+                        <ImageView fx:id="logoImageView" fitHeight="70.0" fitWidth="110.0" preserveRatio="true">
+                     <image>
+                        <Image url="@University-of-Cebu-Logo.jpg" />
+                     </image></ImageView>
+                    </children>
+                </StackPane>
+
+                <VBox alignment="CENTER_LEFT" style="-fx-padding: 0 0 0 20;" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Academic Information System" textFill="#ffffff">
+                            <font>
+                                <Font name="System Bold" size="24.0" />
+                            </font>
+                        </Label>
+                        <Label text="Student Subject Evaluation Portal" textFill="#e6e6e6">
+                            <font>
+                                <Font size="16.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+            </children>
         </HBox>
+
+        <!-- Main content -->
+        <VBox spacing="20.0" style="-fx-padding: 30px;">
+            <children>
+                <Label text="Student Information" textFill="#1a5276">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                </Label>
+
+                <!-- Form container -->
+                <VBox prefHeight="350.0" prefWidth="740.0" spacing="15.0" style="-fx-background-color: #ffffff; -fx-padding: 25px; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 3);">
+                    <children>
+                        <HBox spacing="15.0">
+                            <children>
+                                <Label prefWidth="140.0" text="Student Name:" textFill="#333333">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="nameField" prefWidth="300.0" promptText="Enter full name" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 4;" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="15.0">
+                            <children>
+                                <Label prefWidth="140.0" text="ID Number:" textFill="#333333">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="idNumberField" prefWidth="300.0" promptText="Enter ID number" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 4;" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="15.0">
+                            <children>
+                                <Label prefWidth="140.0" text="New Student:" textFill="#333333">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <ComboBox fx:id="newStudentComboBox" prefWidth="300.0" promptText="Select" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 4;" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="15.0">
+                            <children>
+                                <Label prefWidth="140.0" text="Year Level:" textFill="#333333">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <ComboBox fx:id="yearLevelComboBox" disable="true" prefWidth="300.0" promptText="Select year level" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 4;" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="15.0">
+                            <children>
+                                <Label prefWidth="140.0" text="Semester:" textFill="#333333">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <ComboBox fx:id="semesterComboBox" disable="true" prefWidth="300.0" promptText="Select semester" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 4;" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="15.0">
+                            <children>
+                                <Label prefWidth="140.0" text="Recent Subjects:" textFill="#333333">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <TextField fx:id="subjectsField" disable="true" prefWidth="300.0" promptText="Number of subjects" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 4;" />
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="15.0">
+                            <children>
+                                <Label prefWidth="140.0" text="Program:" textFill="#333333">
+                                    <font>
+                                        <Font size="14.0" />
+                                    </font>
+                                </Label>
+                                <ComboBox fx:id="programComboBox" prefWidth="300.0" promptText="Select program" style="-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-radius: 4;" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <!-- Buttons -->
+                <HBox alignment="CENTER_RIGHT" spacing="15.0" style="-fx-padding: 10px 0 0 0;">
+                    <children>
+                        <Button fx:id="cancelButton" style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 4; -fx-padding: 8 20;" text="Cancel">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Button>
+                        <Button fx:id="nextButton" style="-fx-background-color: #1a5276; -fx-text-fill: white; -fx-background-radius: 4; -fx-padding: 8 20;" text="Next">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
     </children>
 </VBox>

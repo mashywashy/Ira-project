@@ -18,7 +18,7 @@ public class Main {
         subMap.put("it-webdev11", true);
         subMap.put("pe101", true);
 
-        List<Subject> subs = se.getRecommendedSubjects(subMap, 2, 1);
+        List<Subject> subs = se.getRecommendedSubjects(subMap, 1, 1);
         for(Subject sub : subs) {
             System.out.println(sub.getCode() + " " + sub.getUnits());
             totalUnits += sub.getUnits();
