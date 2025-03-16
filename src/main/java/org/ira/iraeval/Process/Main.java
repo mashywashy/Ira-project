@@ -10,15 +10,16 @@ public class Main {
         StudentEval se = new StudentEval("bsit");
         Map<String, Boolean> subMap = new HashMap<>();
 
-        subMap.put("eng100", true);
-        subMap.put("socio102", true);
-        subMap.put("math100", true);
-        subMap.put("psych101", true);
-        subMap.put("cc-intcom11", true);
-        subMap.put("it-webdev11", true);
-        subMap.put("pe101", true);
+        subMap.put("sts101", true);        // Passed
+        subMap.put("philo101", true);      // Passed
+        subMap.put("cc-quameth22", true);  // Passed
+        subMap.put("it-platech22", true);  // Passed
+        subMap.put("cc-appsdev22", true);  // Passed
+        subMap.put("cc-datastruc22", true); // Passed
+        subMap.put("cc-datacom22", true);  // Passed
+        subMap.put("pe104", true);         // Passed
 
-        List<Subject> subs = se.getRecommendedSubjects(subMap, 1, 1);
+        List<Subject> subs = se.getRecommendedSubjects(subMap, 2, 1);
         for(Subject sub : subs) {
             System.out.println(sub.getCode() + " " + sub.getUnits());
             totalUnits += sub.getUnits();
