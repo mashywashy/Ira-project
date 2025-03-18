@@ -54,7 +54,7 @@
                     </font>
                 </Label>
 
-                <Label text="Please select the subjects you've recently taken and indicate whether you passed or failed each one." textFill="#333333">
+                <Label text="Please select the subjects you've recently taken and enter the grade received." textFill="#333333">
                     <font>
                         <Font size="14.0" />
                     </font>
@@ -90,23 +90,24 @@
         </HBox>
 
           <!-- Right side: Buttons -->
-          <HBox alignment="CENTER_RIGHT" layoutX="570.0" layoutY="521.0" spacing="15.0">
-              <children>
-                  <Button fx:id="backButton" mnemonicParsing="false" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-background-radius: 4; -fx-padding: 8 20;" text="Back">
-                      <font>
-                          <Font size="14.0" />
-                      </font>
-                  </Button>
-                  <Button fx:id="submitButton" mnemonicParsing="false" style="-fx-background-color: #1a5276; -fx-text-fill: white; -fx-background-radius: 4; -fx-padding: 8 20;" text="Submit">
-                      <font>
-                          <Font name="System Bold" size="14.0" />
-                      </font>
-                      <effect>
-                          <DropShadow color="#00000033" height="3.0" radius="1.5" width="3.0" />
-                      </effect>
-                  </Button>
-              </children>
-          </HBox>
+        <!-- Right side: Buttons -->
+        <HBox alignment="CENTER_RIGHT" spacing="15.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0">
+            <children>
+                <Button fx:id="backButton" mnemonicParsing="false" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-background-radius: 4; -fx-padding: 8 20;" text="Back">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                </Button>
+                <Button fx:id="submitButton" mnemonicParsing="false" style="-fx-background-color: #1a5276; -fx-text-fill: white; -fx-background-radius: 4; -fx-padding: 8 20;" text="Submit">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                    <effect>
+                        <DropShadow color="#00000033" height="3.0" radius="1.5" width="3.0" />
+                    </effect>
+                </Button>
+            </children>
+        </HBox>
 
     </children>
 </AnchorPane>

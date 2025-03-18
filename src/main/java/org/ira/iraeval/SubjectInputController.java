@@ -6,11 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -46,19 +42,19 @@ public class SubjectInputController {
 
     private class SubjectEntry {
         private ComboBox<String> subjectComboBox;
-        private ComboBox<String> statusComboBox;
+        private TextField gradeTextField;
 
-        public SubjectEntry(ComboBox<String> subjectComboBox, ComboBox<String> statusComboBox) {
+        public SubjectEntry(ComboBox<String> subjectComboBox, TextField gradeTextField) {
             this.subjectComboBox = subjectComboBox;
-            this.statusComboBox = statusComboBox;
+            this.gradeTextField = gradeTextField;
         }
 
         public String getSubject() {
             return subjectComboBox.getValue();
         }
 
-        public boolean isPassed() {
-            return "Pass".equals(statusComboBox.getValue());
+        public String getGrade() {
+            return gradeTextField.getText();
         }
     }
 
@@ -81,8 +77,11 @@ public class SubjectInputController {
         List<String> subjectCodes = new ArrayList<>();
 
         for (Subject subject : allProgramSubjects) {
-            subjectCodes.add(subject.getCode());
+            if(subject.getCode() != null)
+                subjectCodes.add(subject.getCode().toUpperCase());
         }
+
+        subjectCodes = subjectCodes.stream().sorted().toList();
 
         // Create the specified number of subject entries
         for (int i = 0; i < count; i++) {
@@ -91,7 +90,6 @@ public class SubjectInputController {
     }
 
     private void createSubjectEntry(int index, List<String> subjectCodes) {
-        // Create components for this subject entry
         HBox entryContainer = new HBox(10);
         entryContainer.setPadding(new Insets(5, 10, 5, 10));
 
@@ -103,48 +101,72 @@ public class SubjectInputController {
         subjectComboBox.setPrefWidth(150);
         subjectComboBox.setPromptText("Select Subject");
 
-        Label statusLabel = new Label("Status:");
-        statusLabel.setPrefWidth(50);
+        Label gradeLabel = new Label("Grade:");
+        gradeLabel.setPrefWidth(50);
 
-        ComboBox<String> statusComboBox = new ComboBox<>();
-        statusComboBox.getItems().addAll("Pass", "Fail");
-        statusComboBox.setPrefWidth(100);
-        statusComboBox.setPromptText("Status");
+        TextField gradeTextField = new TextField();
+        gradeTextField.setPrefWidth(100);
 
-        // Add components to the container
-        entryContainer.getChildren().addAll(indexLabel, subjectComboBox, statusLabel, statusComboBox);
+        // Restrict input to numeric values with optional decimal
+        TextFormatter<String> textFormatter = new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("[0-9]*\\.?[0-9]*")) {
+                return change;
+            }
+            return null;
+        });
+        gradeTextField.setTextFormatter(textFormatter);
+
+        entryContainer.getChildren().addAll(indexLabel, subjectComboBox, gradeLabel, gradeTextField);
         subjectsContainer.getChildren().add(entryContainer);
 
-        // Store the entry for later retrieval
-        subjectEntries.add(new SubjectEntry(subjectComboBox, statusComboBox));
+        subjectEntries.add(new SubjectEntry(subjectComboBox, gradeTextField));
     }
 
     private void handleSubmit(ActionEvent event) {
-        // Validate entries
         boolean isValid = true;
-        for (SubjectEntry entry : subjectEntries) {
-            if (entry.getSubject() == null || entry.statusComboBox.getValue() == null) {
+        List<String> errorMessages = new ArrayList<>();
+
+        for (int i = 0; i < subjectEntries.size(); i++) {
+            SubjectEntry entry = subjectEntries.get(i);
+            String subject = entry.getSubject();
+            String gradeText = entry.getGrade().trim();
+
+            if (subject == null) {
                 isValid = false;
-                break;
+                errorMessages.add("Subject " + (i + 1) + ": Please select a subject.");
+            }
+            if (gradeText.isEmpty()) {
+                isValid = false;
+                errorMessages.add("Subject " + (i + 1) + ": Grade is required.");
+            } else {
+                try {
+                    double grade = Double.parseDouble(gradeText);
+                    if (grade < 1.0 || grade > 5.0) {
+                        isValid = false;
+                        errorMessages.add("Subject " + (i + 1) + ": Grade must be between 1.0 and 5.0.");
+                    }
+                } catch (NumberFormatException e) {
+                    isValid = false;
+                    errorMessages.add("Subject " + (i + 1) + ": Invalid grade format.");
+                }
             }
         }
 
         if (!isValid) {
-            showAlert(AlertType.ERROR, "Error", "Please complete all subject entries.");
+            showAlert(AlertType.ERROR, "Error", String.join("\n", errorMessages));
             return;
         }
 
-        // Create map of subjects and their pass/fail status
         Map<String, Boolean> subjectStatusMap = new HashMap<>();
         for (SubjectEntry entry : subjectEntries) {
-            subjectStatusMap.put(entry.getSubject(), entry.isPassed());
+            String subject = entry.getSubject().toLowerCase();
+            double grade = Double.parseDouble(entry.getGrade().trim());
+            subjectStatusMap.put(subject, grade <= 3.0);
         }
 
-        // Get recommended subjects based on the student's results
         StudentEval studentEval = new StudentEval(program);
         List<Subject> recommendedSubjects = studentEval.getRecommendedSubjects(subjectStatusMap, year, semester);
-
-        // Pass data to RecommendedSubjectsController
         openRecommendedSubjectsWindow(recommendedSubjects);
     }
 
