@@ -91,7 +91,6 @@ public class SubjectInputController {
     }
 
     private void createSubjectEntry(int index, List<String> subjectCodes) {
-        // Create components for this subject entry
         HBox entryContainer = new HBox(10);
         entryContainer.setPadding(new Insets(5, 10, 5, 10));
 
@@ -103,6 +102,26 @@ public class SubjectInputController {
         subjectComboBox.setPrefWidth(150);
         subjectComboBox.setPromptText("Select Subject");
 
+        // Add listener for subject selection
+        subjectComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (oldValue != null) {
+                // Add the old value back to other combo boxes
+                for (SubjectEntry entry : subjectEntries) {
+                    if (entry.subjectComboBox != subjectComboBox) {
+                        entry.subjectComboBox.getItems().add(oldValue);
+                    }
+                }
+            }
+            if (newValue != null) {
+                // Remove the new value from other combo boxes
+                for (SubjectEntry entry : subjectEntries) {
+                    if (entry.subjectComboBox != subjectComboBox) {
+                        entry.subjectComboBox.getItems().remove(newValue);
+                    }
+                }
+            }
+        });
+
         Label statusLabel = new Label("Status:");
         statusLabel.setPrefWidth(50);
 
@@ -111,11 +130,9 @@ public class SubjectInputController {
         statusComboBox.setPrefWidth(100);
         statusComboBox.setPromptText("Status");
 
-        // Add components to the container
         entryContainer.getChildren().addAll(indexLabel, subjectComboBox, statusLabel, statusComboBox);
         subjectsContainer.getChildren().add(entryContainer);
 
-        // Store the entry for later retrieval
         subjectEntries.add(new SubjectEntry(subjectComboBox, statusComboBox));
     }
 
