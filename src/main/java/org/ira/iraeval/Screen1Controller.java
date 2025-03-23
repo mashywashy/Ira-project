@@ -14,7 +14,10 @@ import org.ira.iraeval.Process.StudentEval;
 import org.ira.iraeval.Process.Subject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 public class Screen1Controller {
 
@@ -28,8 +31,13 @@ public class Screen1Controller {
     @FXML private Button nextButton;
     @FXML private Button cancelButton;
 
+    // Regex patterns for validation
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z.\\s]+$"); // Only letters, dots, and spaces
+    private static final Pattern ID_PATTERN = Pattern.compile("^\\d{1,9}$"); // Only digits, max 9 digits
+
     @FXML
     public void initialize() {
+        System.out.println("DEBUG: Initializing Screen1Controller");
         // Initialize ComboBoxes
         newStudentComboBox.getItems().addAll("Yes", "No");
         programComboBox.getItems().addAll("BSIT", "BSA", "BSN", "BSMT");
@@ -57,8 +65,9 @@ public class Screen1Controller {
     }
 
     private void handleNextButton() {
-        String name = nameField.getText();
-        String id = idNumberField.getText();
+        System.out.println("DEBUG: Next button clicked");
+        String name = nameField.getText().trim();
+        String id = idNumberField.getText().trim();
         String isNewStudent = newStudentComboBox.getValue();
         String program = programComboBox.getValue();
         String yearLevel = yearLevelComboBox.getValue();
@@ -70,24 +79,35 @@ public class Screen1Controller {
             return;
         }
 
-        if ("No".equals(isNewStudent)) {
-            if (subjectsField.getText().isEmpty() || !isNumeric(subjectsField.getText())) {
-                showAlert("Error", "Please enter a valid number of subjects taken.");
-                return;
-            }
-
-            int subjectCount = Integer.parseInt(subjectsField.getText());
-            if (subjectCount <= 0 || subjectCount > 8) {
-                showAlert("Error", "You can take between 1 and 8 subjects only.");
-                return;
-            }
+        // Validate name - only letters and dots allowed
+        if (!isValidName(name)) {
+            showAlert("Error", "Name should contain only letters, spaces, and dots (periods).");
+            return;
         }
+
+        // Validate ID - only digits, max 9 digits
+        if (!isValidId(id)) {
+            showAlert("Error", "ID Number should contain only digits and be 9 or fewer digits.");
+            return;
+        }
+
+        System.out.println("DEBUG: Validation passed, processing as " + 
+                          (isNewStudent.equals("Yes") ? "new student" : "continuing student"));
 
         if ("Yes".equals(isNewStudent)) {
             // For new students, directly show recommendations
             StudentEval se = new StudentEval(program);
-            List<Subject> recommendedSubjects = se.getRecommendedSubjects();
-            displayRecommendedSubjects(name, id, recommendedSubjects);
+            List<Subject> subjects = se.getRecommendedSubjects();
+            
+            // Convert list to map with all subjects marked as "Recommended"
+            Map<Subject, String> recommendedSubjects = new HashMap<>();
+            for (Subject subject : subjects) {
+                recommendedSubjects.put(subject, "Recommended");
+            }
+            
+            System.out.println("DEBUG: Displaying " + recommendedSubjects.size() + 
+                              " recommended subjects for new student");
+            displayRecommendedSubjects(name, id, program, recommendedSubjects);
         } else {
             // For continuing students, check the subjects count field
             if (subjectsField.getText().isEmpty() || !isNumeric(subjectsField.getText())) {
@@ -107,8 +127,23 @@ public class Screen1Controller {
             }
 
             // Open the subject selection screen
+            System.out.println("DEBUG: Opening subject selection with " + subjectCount + " subjects");
             openSubjectSelectionScreen(subjectCount, program, name, id, yearLevel, semester);
         }
+    }
+
+    /**
+     * Validates that the name contains only letters, spaces, and dots
+     */
+    private boolean isValidName(String name) {
+        return NAME_PATTERN.matcher(name).matches();
+    }
+
+    /**
+     * Validates that the ID contains only digits and is 9 or fewer digits
+     */
+    private boolean isValidId(String id) {
+        return ID_PATTERN.matcher(id).matches();
     }
 
     private void openSubjectSelectionScreen(int subjectCount, String program, String name, String id, String year, String semester) {
@@ -116,15 +151,8 @@ public class Screen1Controller {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("subject_input.fxml"));
             Parent root = loader.load();
 
-            Object controller = loader.getController();
-
-
-            if (controller instanceof SubjectInputController) {
-                ((SubjectInputController) controller).setupSubjects(subjectCount, program, name, id, Integer.parseInt(year), Integer.parseInt(semester));
-            } else {
-                showAlert("Error", "Unexpected controller: " + controller.getClass().getName());
-                return;
-            }
+            SubjectInputController controller = loader.getController();
+            controller.setupSubjects(subjectCount, program, Integer.parseInt(year), Integer.parseInt(semester), name, id);
 
             Stage stage = new Stage();
             stage.setTitle("Subject Selection");
@@ -142,22 +170,30 @@ public class Screen1Controller {
         }
     }
 
-    // This method replaces the existing displayRecommendedSubjects method in AppController.java
-    private void displayRecommendedSubjects(String name, String id, List<Subject> recommendedSubjects) {
+    private void displayRecommendedSubjects(String name, String id, String program, Map<Subject, String> recommendedSubjects) {
         try {
+            System.out.println("DEBUG: Loading subject_output.fxml");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("subject_output.fxml"));
             Parent root = loader.load();
 
             SubjectOutputController controller = loader.getController();
-            controller.setupRecommendedSubjects(name, id, programComboBox.getValue(), recommendedSubjects);
+            
+            // For new students, we don't have input subjects
+            System.out.println("DEBUG: Setting up controller with " + recommendedSubjects.size() + " subjects");
+            controller.setupRecommendedSubjects(name, id, program, recommendedSubjects);
+
+            for (Map.Entry<Subject, String> entry : recommendedSubjects.entrySet()) {
+                Subject subject = entry.getKey();
+                String status = entry.getValue();
+                System.out.println("DEBUG: Subject: " + subject.getCode() + 
+                                  " (" + subject.getUnits() + " units) - " + status);
+            }
 
             Stage stage = new Stage();
             stage.setTitle("Recommended Subjects");
             stage.setScene(new Scene(root));
             stage.setMaximized(true);
             stage.show();
-
-
 
             // Close the current window
             Stage currentStage = (Stage) nextButton.getScene().getWindow();
@@ -170,6 +206,7 @@ public class Screen1Controller {
     }
 
     private void showAlert(String title, String message) {
+        System.out.println("DEBUG: Showing alert - " + title + ": " + message);
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -178,6 +215,7 @@ public class Screen1Controller {
     }
 
     private void handleCancelButton() {
+        System.out.println("DEBUG: Cancel button clicked, closing window");
         Stage stage = (Stage) cancelButton.getScene().getWindow();
         stage.close();
     }

@@ -1,17 +1,13 @@
 package org.ira.iraeval;
 
-
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -19,6 +15,7 @@ import javafx.event.ActionEvent;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,26 +36,30 @@ public class SubjectInputController {
 
     private List<SubjectEntry> subjectEntries = new ArrayList<>();
     private String program;
-    private String studentName;
-    private String studentId;
     private int year;
     private int semester;
+    private String studentName;
+    private String studentId;
 
     private class SubjectEntry {
         private ComboBox<String> subjectComboBox;
-        private ComboBox<String> statusComboBox;
+        private TextField gradeField;
 
-        public SubjectEntry(ComboBox<String> subjectComboBox, ComboBox<String> statusComboBox) {
+        public SubjectEntry(ComboBox<String> subjectComboBox, TextField gradeField) {
             this.subjectComboBox = subjectComboBox;
-            this.statusComboBox = statusComboBox;
+            this.gradeField = gradeField;
         }
 
         public String getSubject() {
             return subjectComboBox.getValue();
         }
 
-        public boolean isPassed() {
-            return "Pass".equals(statusComboBox.getValue());
+        public Double getGrade() {
+            try {
+                return Double.parseDouble(gradeField.getText());
+            } catch (NumberFormatException e) {
+                return null; // Invalid grade
+            }
         }
     }
 
@@ -68,21 +69,21 @@ public class SubjectInputController {
         backButton.setOnAction(this::handleBack);
     }
 
-    public void setupSubjects(int count, String program, String studentName, String studentId, int year, int semester) {
+    public void setupSubjects(int count, String program, int year, int semester, String studentName, String studentId) {
         this.program = program;
+        this.year = year;
+        this.semester = semester;
         this.studentName = studentName;
         this.studentId = studentId;
-        this.year = year;  // Store year
-        this.semester = semester;  // Store semester
 
         // Get all subjects for the program to populate the ComboBoxes
         StudentEval studentEval = new StudentEval(program);
-        List<Subject> allProgramSubjects = studentEval.getAllSubjects();
         List<String> subjectCodes = new ArrayList<>();
-
-        for (Subject subject : allProgramSubjects) {
-            subjectCodes.add(subject.getCode());
-        }
+        studentEval.getAllSubjects().forEach(subject -> subjectCodes.add(subject.getCode()));
+        
+        // Sort the subject codes
+        Collections.sort(subjectCodes);
+        System.out.println("DEBUG: Sorted subject codes: " + subjectCodes);
 
         // Create the specified number of subject entries
         for (int i = 0; i < count; i++) {
@@ -98,17 +99,21 @@ public class SubjectInputController {
         indexLabel.setPrefWidth(80);
 
         ComboBox<String> subjectComboBox = new ComboBox<>();
-        subjectComboBox.getItems().addAll(subjectCodes);
+        // Add sorted items to the combo box
+        ObservableList<String> sortedItems = FXCollections.observableArrayList(subjectCodes);
+        sortedItems.sort(String::compareTo);
+        subjectComboBox.setItems(sortedItems);
+        
         subjectComboBox.setPrefWidth(150);
         subjectComboBox.setPromptText("Select Subject");
 
         // Add listener for subject selection
         subjectComboBox.valueProperty().addListener((obs, oldValue, newValue) -> {
             if (oldValue != null) {
-                // Add the old value back to other combo boxes
+                // Add the old value back to other combo boxes (maintaining sort)
                 for (SubjectEntry entry : subjectEntries) {
                     if (entry.subjectComboBox != subjectComboBox) {
-                        entry.subjectComboBox.getItems().add(oldValue);
+                        addItemSorted(entry.subjectComboBox, oldValue);
                     }
                 }
             }
@@ -122,44 +127,63 @@ public class SubjectInputController {
             }
         });
 
-        Label statusLabel = new Label("Status:");
-        statusLabel.setPrefWidth(50);
+        Label gradeLabel = new Label("Grade:");
+        gradeLabel.setPrefWidth(50);
 
-        ComboBox<String> statusComboBox = new ComboBox<>();
-        statusComboBox.getItems().addAll("Pass", "Fail");
-        statusComboBox.setPrefWidth(100);
-        statusComboBox.setPromptText("Status");
+        TextField gradeField = new TextField();
+        gradeField.setPrefWidth(100);
+        gradeField.setPromptText("Enter Grade (1.0 - 5.0)");
 
-        entryContainer.getChildren().addAll(indexLabel, subjectComboBox, statusLabel, statusComboBox);
+        entryContainer.getChildren().addAll(indexLabel, subjectComboBox, gradeLabel, gradeField);
         subjectsContainer.getChildren().add(entryContainer);
 
-        subjectEntries.add(new SubjectEntry(subjectComboBox, statusComboBox));
+        subjectEntries.add(new SubjectEntry(subjectComboBox, gradeField));
+    }
+    
+    /**
+     * Adds an item to a ComboBox while maintaining alphabetical sort order
+     * @param comboBox The ComboBox to add the item to
+     * @param item The item to add
+     */
+    private void addItemSorted(ComboBox<String> comboBox, String item) {
+        if (item == null || comboBox == null) return;
+        
+        // Get current items
+        ObservableList<String> items = comboBox.getItems();
+        
+        // Add the new item
+        items.add(item);
+        
+        // Sort the items
+        FXCollections.sort(items);
+        
+        System.out.println("DEBUG: Added item " + item + " to combo box, sorted items: " + items);
     }
 
     private void handleSubmit(ActionEvent event) {
-        // Validate entries
+        Map<String, Double> subjectGradeMap = new HashMap<>();
         boolean isValid = true;
+
         for (SubjectEntry entry : subjectEntries) {
-            if (entry.getSubject() == null || entry.statusComboBox.getValue() == null) {
+            String subject = entry.getSubject();
+            Double grade = entry.getGrade();
+
+            if (subject == null || grade == null || grade < 1.0 || grade > 5.0) {
                 isValid = false;
                 break;
             }
+
+            subjectGradeMap.put(subject, grade);
         }
 
         if (!isValid) {
-            showAlert(AlertType.ERROR, "Error", "Please complete all subject entries.");
+            showAlert(Alert.AlertType.ERROR, "Error", "Please complete all subject entries with valid grades (1.0 - 5.0).");
             return;
         }
 
-        // Create map of subjects and their pass/fail status
-        Map<String, Boolean> subjectStatusMap = new HashMap<>();
-        for (SubjectEntry entry : subjectEntries) {
-            subjectStatusMap.put(entry.getSubject(), entry.isPassed());
-        }
-
-        // Get recommended subjects based on the student's results
+        // Get recommended subjects
         StudentEval studentEval = new StudentEval(program);
-        List<Subject> recommendedSubjects = studentEval.getRecommendedSubjects(subjectStatusMap, year, semester);
+        Map<Subject, String> recommendedSubjects = studentEval.getRecommendedSubjects(subjectGradeMap, year, semester);
 
         // Pass data to RecommendedSubjectsController
         openRecommendedSubjectsWindow(recommendedSubjects);
@@ -186,33 +210,53 @@ public class SubjectInputController {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert(AlertType.ERROR, "Navigation Error", "Could not return to main screen.");
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", "Could not return to main screen.");
         }
     }
 
-    private void openRecommendedSubjectsWindow(List<Subject> recommendedSubjects) {
+    private void openRecommendedSubjectsWindow(Map<Subject, String> recommendedSubjects) {
+        System.out.println("DEBUG: Opening recommended subjects window");
+        System.out.println("DEBUG: Student: " + studentName + " (" + studentId + "), Program: " + program);
+        System.out.println("DEBUG: Recommended subjects count: " + recommendedSubjects.size());
+        
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("subject_output.fxml"));
             Parent root = loader.load();
+            System.out.println("DEBUG: Loaded subject_output.fxml");
 
             SubjectOutputController controller = loader.getController();
-            controller.setupRecommendedSubjects(studentName, studentId, program, recommendedSubjects);
+            
+            // Also pass the input subjects
+            Map<String, Double> subjectGradeMap = new HashMap<>();
+            for (SubjectEntry entry : subjectEntries) {
+                if (entry.getSubject() != null && entry.getGrade() != null) {
+                    subjectGradeMap.put(entry.getSubject(), entry.getGrade());
+                    System.out.println("DEBUG: Added input subject: " + entry.getSubject() + 
+                                      " - Grade: " + entry.getGrade());
+                }
+            }
+            
+            System.out.println("DEBUG: Passing " + subjectGradeMap.size() + " input subjects");
+            controller.setupRecommendedSubjects(studentName, studentId, program, subjectGradeMap, recommendedSubjects);
 
             Stage stage = new Stage();
             stage.setTitle("Recommended Subjects");
             stage.setScene(new Scene(root));
             stage.setMaximized(true);
+            System.out.println("DEBUG: Showing recommended subjects window");
             stage.show();
 
             // Close the current window
+            System.out.println("DEBUG: Closing subject input window");
             ((Stage) submitButton.getScene().getWindow()).close();
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("DEBUG: ERROR opening recommended subjects window: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Error", "Could not open recommended subjects window: " + e.getMessage());
         }
     }
 
-
-    private void showAlert(AlertType type, String title, String message) {
+    private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);

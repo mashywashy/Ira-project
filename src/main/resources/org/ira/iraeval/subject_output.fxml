@@ -14,31 +14,33 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #f0f5fa;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ira.iraeval.SubjectOutputController">
+<VBox prefHeight="768.0" prefWidth="1024.0" style="-fx-background-color: #f0f5fa;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ira.iraeval.SubjectOutputController">
     <children>
-        <!-- Header with logo and title -->
-        <HBox alignment="CENTER_LEFT" style="-fx-background-color: #1a5276; -fx-padding: 15px;">
+        <!-- Header with logo and title - smaller height -->
+        <HBox alignment="CENTER_LEFT" style="-fx-background-color: #1a5276; -fx-padding: 10px;">
             <children>
-                <!-- Logo placeholder -->
-                <StackPane prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;">
+                <!-- Smaller logo -->
+                <StackPane prefHeight="60.0" prefWidth="100.0" style="-fx-background-color: #ffffff; -fx-background-radius: 5;">
                     <children>
-                        <ImageView fx:id="logoImageView" fitHeight="70.0" fitWidth="110.0" preserveRatio="true">
-                     <image>
-                        <Image url="@University-of-Cebu-Logo.jpg" />
-                     </image></ImageView>
+                        <ImageView fx:id="logoImageView" fitHeight="50.0" fitWidth="90.0" preserveRatio="true">
+                            <image>
+                                <Image url="@University-of-Cebu-Logo.jpg" />
+                            </image>
+                        </ImageView>
                     </children>
                 </StackPane>
 
-                <VBox alignment="CENTER_LEFT" style="-fx-padding: 0 0 0 20;" HBox.hgrow="ALWAYS">
+                <!-- Smaller text -->
+                <VBox alignment="CENTER_LEFT" style="-fx-padding: 0 0 0 15;" HBox.hgrow="ALWAYS">
                     <children>
                         <Label text="Academic Information System" textFill="#ffffff">
                             <font>
-                                <Font name="System Bold" size="24.0" />
+                                <Font name="System Bold" size="20.0" />
                             </font>
                         </Label>
                         <Label text="Recommended Subjects" textFill="#e6e6e6">
                             <font>
-                                <Font size="16.0" />
+                                <Font size="14.0" />
                             </font>
                         </Label>
                     </children>
@@ -48,65 +50,81 @@
 
         <AnchorPane fx:id="rootPane" maxHeight="-1.0" maxWidth="-1.0" VBox.vgrow="ALWAYS">
             <padding>
-                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
             </padding>
             <children>
-                <!-- Student Information Section -->
-                <VBox spacing="15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <!-- Student Information Section - more compact -->
+                <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <children>
                         <Label text="Student Information" textFill="#1a5276">
                             <font>
-                                <Font name="System Bold" size="18.0" />
+                                <Font name="System Bold" size="16.0" />
                             </font>
                         </Label>
 
-                        <VBox spacing="10.0" style="-fx-background-color: #ffffff; -fx-padding: 20px; -fx-background-radius: 8;">
+                        <VBox spacing="5.0" style="-fx-background-color: #ffffff; -fx-padding: 10px; -fx-background-radius: 8;">
                             <effect>
-                                <DropShadow color="#00000022" height="6.0" radius="2.5" width="6.0" />
+                                <DropShadow color="#00000022" height="4.0" radius="1.5" width="4.0" />
                             </effect>
                             <children>
-                                <HBox spacing="40.0">
+                                <HBox spacing="30.0">
                                     <children>
-                                        <VBox spacing="5.0">
+                                        <VBox spacing="3.0">
                                             <children>
                                                 <Label text="Name:" textFill="#555555">
                                                     <font>
-                                                        <Font size="13.0" />
+                                                        <Font size="12.0" />
                                                     </font>
                                                 </Label>
                                                 <Label fx:id="nameLabel" text="[Student Name]" textFill="#333333">
                                                     <font>
-                                                        <Font name="System Bold" size="14.0" />
+                                                        <Font name="System Bold" size="13.0" />
                                                     </font>
                                                 </Label>
                                             </children>
                                         </VBox>
 
-                                        <VBox spacing="5.0">
+                                        <VBox spacing="3.0">
                                             <children>
                                                 <Label text="ID Number:" textFill="#555555">
                                                     <font>
-                                                        <Font size="13.0" />
+                                                        <Font size="12.0" />
                                                     </font>
                                                 </Label>
                                                 <Label fx:id="idLabel" text="[Student ID]" textFill="#333333">
                                                     <font>
-                                                        <Font name="System Bold" size="14.0" />
+                                                        <Font name="System Bold" size="13.0" />
                                                     </font>
                                                 </Label>
                                             </children>
                                         </VBox>
 
-                                        <VBox spacing="5.0">
+                                        <VBox spacing="3.0">
                                             <children>
                                                 <Label text="Program:" textFill="#555555">
                                                     <font>
-                                                        <Font size="13.0" />
+                                                        <Font size="12.0" />
                                                     </font>
                                                 </Label>
                                                 <Label fx:id="programLabel" text="[Program]" textFill="#333333">
                                                     <font>
-                                                        <Font name="System Bold" size="14.0" />
+                                                        <Font name="System Bold" size="13.0" />
+                                                    </font>
+                                                </Label>
+                                            </children>
+                                        </VBox>
+                                        
+                                        <!-- Total Units - moved to student info section -->
+                                        <VBox spacing="3.0" HBox.hgrow="ALWAYS" alignment="CENTER_RIGHT">
+                                            <children>
+                                                <Label text="Total Units:" textFill="#555555">
+                                                    <font>
+                                                        <Font size="12.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="totalUnitsLabel" text="0" textFill="#1a5276">
+                                                    <font>
+                                                        <Font name="System Bold" size="13.0" />
                                                     </font>
                                                 </Label>
                                             </children>
@@ -118,24 +136,26 @@
                     </children>
                 </VBox>
 
-                <!-- Recommended Subjects Section -->
-                <VBox spacing="15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">
+                <!-- Recommended Subjects Section - adjusted anchoring -->
+                <VBox spacing="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="110.0" AnchorPane.bottomAnchor="50.0">
                     <children>
                         <Label text="Recommended Subjects" textFill="#1a5276">
                             <font>
-                                <Font name="System Bold" size="18.0" />
+                                <Font name="System Bold" size="16.0" />
                             </font>
                         </Label>
 
-                        <VBox prefWidth="747.0" spacing="15.0" style="-fx-background-color: #ffffff; -fx-padding: 20px; -fx-background-radius: 8;">
+                        <!-- This is the mainContainer VBox that will hold our dynamic content -->
+                        <VBox fx:id="mainContainer" VBox.vgrow="ALWAYS" spacing="10.0" style="-fx-background-color: #ffffff; -fx-padding: 15px; -fx-background-radius: 8;">
                             <effect>
-                                <DropShadow color="#00000022" height="6.0" radius="2.5" width="6.0" />
+                                <DropShadow color="#00000022" height="4.0" radius="1.5" width="4.0" />
                             </effect>
                             <children>
-                                <TableView fx:id="subjectsTable" prefHeight="220.0" style="-fx-background-color: #ffffff; -fx-table-cell-border-color: #eeeeee;">
+                                <!-- Default table view that will be replaced in the controller -->
+                                <TableView fx:id="subjectsTable" VBox.vgrow="ALWAYS" style="-fx-background-color: #ffffff; -fx-table-cell-border-color: #eeeeee;">
                                     <columns>
-                                        <TableColumn fx:id="codeColumn" prefWidth="500.0" text="Subject Code" />
-                                        <TableColumn fx:id="unitsColumn" prefWidth="200.0" text="Units" />
+                                        <TableColumn fx:id="codeColumn" prefWidth="350.0" text="Subject Code" />
+                                        <TableColumn fx:id="unitsColumn" prefWidth="150.0" text="Units" />
                                     </columns>
                                     <placeholder>
                                         <Label text="No recommended subjects available" textFill="#555555" />
@@ -146,43 +166,27 @@
                     </children>
                 </VBox>
 
-                <!-- Button Section -->
-                <HBox alignment="CENTER_RIGHT" spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                <!-- Button Section - fixed positioning -->
+                <HBox alignment="CENTER_RIGHT" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                     <children>
                         <Button fx:id="printButton" onAction="#handlePrint" style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-background-radius: 4;" text="Print">
                             <padding>
-                                <Insets bottom="8.0" left="20.0" right="20.0" top="8.0" />
+                                <Insets bottom="6.0" left="15.0" right="15.0" top="6.0" />
                             </padding>
                             <font>
-                                <Font size="14.0" />
+                                <Font size="13.0" />
                             </font>
                         </Button>
                         <Button fx:id="closeButton" onAction="#handleClose" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-background-radius: 4;" text="Close">
                             <padding>
-                                <Insets bottom="8.0" left="20.0" right="20.0" top="8.0" />
+                                <Insets bottom="6.0" left="15.0" right="15.0" top="6.0" />
                             </padding>
                             <font>
-                                <Font size="14.0" />
+                                <Font size="13.0" />
                             </font>
                         </Button>
                     </children>
                 </HBox>
-
-                    <!-- Total Units Section -->
-                    <HBox alignment="CENTER_RIGHT" layoutX="512.0" layoutY="159.0" prefHeight="20.0" prefWidth="235.0" spacing="15.0">
-                        <children>
-                            <Label text="Total Units:" textFill="#333333">
-                                <font>
-                                    <Font name="System Bold" size="14.0" />
-                                </font>
-                            </Label>
-                            <Label fx:id="totalUnitsLabel" text="0" textFill="#1a5276">
-                                <font>
-                                    <Font name="System Bold" size="14.0" />
-                                </font>
-                            </Label>
-                        </children>
-                    </HBox>
             </children>
         </AnchorPane>
     </children>

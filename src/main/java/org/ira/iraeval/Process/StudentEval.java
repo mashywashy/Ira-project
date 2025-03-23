@@ -104,17 +104,23 @@ public class StudentEval {
         return new ArrayList<>(subjectsMap.values());
     }
 
-    public List<Subject> getRecommendedSubjects(Map<String, Boolean> subMap, int year, int semester) {
-        List<Subject> recommendedSubs = new ArrayList<>();
+    public Map<Subject, String> getRecommendedSubjects(Map<String, Double> subMap, int year, int semester) {
+        Map<Subject, String> recommendedSubs = new HashMap<>();
         List<Subject> potentialNewSubs = new ArrayList<>();
         List<String> passedSubjects = new ArrayList<>();
 
         // Determine passed and failed subjects
-        for (Map.Entry<String, Boolean> entry : subMap.entrySet()) {
-            if (entry.getValue()) {
+        for (Map.Entry<String, Double> entry : subMap.entrySet()) {
+            double grade = entry.getValue();
+            if (grade >= 1.0 && grade <= 3.0) {
                 passedSubjects.add(entry.getKey());
+            } else if (grade > 3.0 && grade <= 5.0) {
+                Subject failedSubject = subjectsMap.get(entry.getKey());
+                if (failedSubject != null) {
+                    recommendedSubs.put(failedSubject, "Retake");
+                }
             } else {
-                recommendedSubs.add(subjectsMap.get(entry.getKey()));
+                throw new IllegalArgumentException("Invalid grade for subject " + entry.getKey() + ": " + grade);
             }
         }
 
@@ -134,13 +140,15 @@ public class StudentEval {
         }
 
         // Calculate current load
-        int currentLoad = recommendedSubs.stream().mapToInt(Subject::getUnits).sum();
+        int currentLoad = recommendedSubs.keySet().stream()
+                .mapToInt(Subject::getUnits)
+                .sum();
         int maxLoad = 21; // Maximum allowed units
 
         // Add subjects to recommendedSubs until maxLoad is reached
         for (Subject subject : potentialNewSubs) {
             if (currentLoad + subject.getUnits() <= maxLoad) {
-                recommendedSubs.add(subject);
+                recommendedSubs.put(subject, "Recommended");
                 currentLoad += subject.getUnits();
             } else {
                 break; // Stop if adding this subject would exceed maxLoad
@@ -156,7 +164,7 @@ public class StudentEval {
                 for (Subject subject : termAfterNextSubjects) {
                     if (passedSubjects.containsAll(subject.getPrerequisites())) {
                         if (currentLoad + subject.getUnits() <= maxLoad) {
-                            recommendedSubs.add(subject);
+                            recommendedSubs.put(subject, "Recommended");
                             currentLoad += subject.getUnits();
                         } else {
                             break; // Stop if adding this subject would exceed maxLoad
